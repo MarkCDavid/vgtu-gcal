@@ -1,0 +1,2 @@
+class VGTUTimetable:
+    pass
