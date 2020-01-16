@@ -131,3 +131,4 @@ dmypy.json
 # HTML
 *.html
 *.HTML
+*_files/

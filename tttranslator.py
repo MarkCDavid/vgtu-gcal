@@ -1,24 +1,14 @@
-from ttdatatags import tags
+lt_dl = ["Paskaita", "Grupė", "Laikas", "Savaitė", "Pogrupis",
+         "Dalykas", "Auditorija", "Dėstytojas", "Tipas", ]
 
-def to_data_label_tag(data_label):
-    for ltags in language_tags:
-        if data_label in ltags:
-            return ltags[data_label]
+en_dl = ["Lecture", "Group", "Time", "Week", "Subgroup",
+         "Subject", "Auditory", "Lecturer", "Type", ]
 
-en = []
-en_tags = dict(zip(en, tags))
+tags = ["lecture", "group", "time", "week", "subgroup",
+        "subject", "auditory", "lecturer", "type"]
 
-lt = [
-    "Paskaita",
-    "Grupė",
-    "Laikas",
-    "Savaitė",
-    "Pogrupis",
-    "Dalykas",
-    "Auditorija",
-    "Dėstytojas",
-    "Tipas",
-]
-lt_tags = dict(zip(lt, tags))
+data_title_translations = {
+    "en": dict(zip(tags, en_dl)),
+    "lt": dict(zip(tags, lt_dl))
+}
 
-language_tags = [en_tags, lt_tags]
