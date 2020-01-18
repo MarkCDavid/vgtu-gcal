@@ -1,4 +1,6 @@
-from timetableparser import parse
+#!python
+
+from timetable.timetableparser import parse
 import sys
 import export
 import argparse
@@ -10,13 +12,15 @@ def change_extension(filename, new_extension):
 
 def build_options():
     parser = argparse.ArgumentParser()
-    parser.add_argument('scriptname', default=sys.stdin)
-    parser.add_argument('infile', default=sys.stdin)
-    parser.add_argument('outfile', default=sys.stdout)
-    parser.add_argument('--simple', action='store_const', const=True, default=True)
-    parser.add_argument('--nogroups', action='store_const', const=True, default=True)
-    args = parser.parse_args(sys.argv)
-    return (args.infile, args.outfile, export.Options(args.simple, not args.nogroups))
+    parser.add_argument('input', default=sys.stdin, help="input HTML file")
+    parser.add_argument('output', default=sys.stdout, help="output HTML file")
+    parser.add_argument('--simple', action='store_const', const=True,
+                        default=False,
+                        help="course code and additional information in parentheses are discarded from the subject")
+    parser.add_argument('--nogroups', action='store_const',
+                        const=True, default=False,  help="subgroups are discarded from the subject")
+    args = parser.parse_args(sys.argv[1:])
+    return (args.input, args.output, export.Options(args.simple, not args.nogroups))
 
 
 def convert(infile, outfile, options):

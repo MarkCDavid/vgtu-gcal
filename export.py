@@ -1,6 +1,6 @@
 import utils.stringutils as stringutils
 import utils.csvutils as csvutils
-from weekiterator import WeekIterator
+from utils.weekiterator import WeekIterator
 
 headings = ["Subject", "Start Date", "Start Time", "End Date", "End Time", "All Day Event", "Location", "Description"]
 header = ','.join(headings)
@@ -20,7 +20,7 @@ class Options:
 def csv_gcal_timetableevent(event, date, options):
 
     def format_subject(event, options):
-        subject = f"{stringutils.remove_parentheses(event.Subject) if options.simple else event.Subject}"
+        subject = f"{stringutils.remove_parentheses(event.Subject) if options.simple else event.Subject}".strip()
         group = f" gr. {event.Subgroup}" if options.include_subgroup else ""
         subject_type = f"({event.Type})"
         return f"{(subject + group).strip()} {subject_type}"

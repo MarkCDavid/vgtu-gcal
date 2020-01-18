@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
-from timetabletranslator import data_label_translations, dow_translations
-from timetableformatter import TimetableFormatter
-from timetable import Timetable, TimetableWeekday, TimetableEvent
+from timetable.timetabletranslator import data_label_translations, dow_translations
+from timetable.timetableformatter import TimetableFormatter
+from timetable.timetable import Timetable, TimetableWeekday, TimetableEvent
 
 
 def fetch_language(soup):
