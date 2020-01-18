@@ -1,32 +1,27 @@
-class TimeTable:
-    
+class Timetable:
+
     def __init__(self):
         self.weekdays = []
 
     def AddWeekday(self, weekday):
         self.weekdays.append(weekday)
 
-class TimeTableWeekday:
+
+class TimetableWeekday:
 
     def __init__(self):
         self.events = []
-    
-    def UpdateData(self, weekday_data):
-        self.dayofweek = weekday_data[0]
+
+    def UpdateData(self, weekday_data, day_of_week_translation):
+        self.day_of_week = day_of_week_translation[weekday_data[0]]
         self.date_from = weekday_data[1]
         self.date_to = weekday_data[2]
 
     def AddEvent(self, event):
         self.events.append(event)
 
-    def __str__(self):
-        result = f"{self.dayofweek}\n"
-        for event in self.events:
-            result += f"{str(event)}\n"
-        result += "\n"
-        return result    
 
-class TimeTableEvent:
+class TimetableEvent:
 
     def Update(self, entry):
         self.Lecture = entry[0]
@@ -38,7 +33,3 @@ class TimeTableEvent:
         self.Auditory = entry[6]
         self.Lecturer = entry[7]
         self.Type = entry[8]
-
-    def __str__(self):
-        return f"{self.Time} - {self.Subject}"
-    

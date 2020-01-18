@@ -128,7 +128,11 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+
 # HTML
 *.html
 *.HTML
 *_files/
+
+# CSV
+*.csv

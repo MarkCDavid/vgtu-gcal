@@ -1,10 +1,12 @@
-class TTFormatter:
+from utils.stringutils import remove_parentheses
 
-    def __init__(self, translations):
+
+class TimetableFormatter:
+
+    def __init__(self, T_data_label):
         self.assigned_methods = {}
-        format_methods = [method for method in dir(self) if method.startswith("_format")]
-        for tag in translations:
-            data_title = translations[tag]
+        for tag in T_data_label:
+            data_title = T_data_label[tag]
             self.assigned_methods[data_title] = f"_format_{tag}"
 
     def ttformat(self, data):
@@ -14,28 +16,28 @@ class TTFormatter:
         return format_method(data)
 
     def _format_lecture(self, data):
-        return data.text
+        return data.text.strip()
 
     def _format_group(self, data):
-        return data.find("div", class_="auditory").next
+        return data.find("div", class_="auditory").next.strip()
 
     def _format_time(self, data):
-        return data.text.split('-')
+        return data.text.strip().split('-')
 
     def _format_week(self, data):
-        return data.text
+        return data.text.strip()
 
     def _format_subgroup(self, data):
-        return data.text
+        return data.text.strip()
 
     def _format_subject(self, data):
-        return data.text
+        return data.text.strip()
 
     def _format_auditory(self, data):
-        return data.find("div", class_="auditory").next
+        return data.find("div", class_="auditory").next.strip()
 
     def _format_lecturer(self, data):
-        return data.text
+        return data.text.strip()
 
     def _format_type(self, data):
-        return data.text
+        return remove_parentheses(data.text).strip()
