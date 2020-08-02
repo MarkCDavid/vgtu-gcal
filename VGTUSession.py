@@ -1,8 +1,17 @@
+import base64
 import getpass
 from urllib import parse as urlparse
 
+import dotenv
 import requests
+import os.path
+
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+
 from bs4 import BeautifulSoup
+
+import utility
 
 
 class VGTUSession:
@@ -38,11 +47,9 @@ class VGTULogin:
     SAML_URL = 'https://mano.vgtu.lt/sso2/module.php/saml/sp/saml2-acs.php/default-sp'
 
     @staticmethod
-    def get_session(auth=None):
+    def get_session():
 
-        if auth is None:
-            auth = {'username': input('Username: '), 'password': getpass.getpass()}
-
+        auth = VGTUAuth().to_params()
         session = requests.session()
 
         try:
@@ -86,7 +93,54 @@ class VGTULogin:
             raise VGTULoginError(f"Status code: {response.status_code}\nFailed action: {failed_action}")
 
 
+class VGTUAuth:
+    KEY = 'key.pem'
+    ENV = '.env'
+    USERNAME = 'USERNAME'
+    PASSWORD = 'PASSWORD'
+
+    def __init__(self):
+        key = self.get_key()
+        if key is None:
+            self.username = input('Username: ')
+            self.password = getpass.getpass()
+            if utility.confirmation_prompt('Remember?'):
+                self.encrypt_auth(self.set_key().publickey())
+        else:
+            self.decrypt_auth(key)
+
+    def to_params(self):
+        return {'username': self.username, 'password': self.password}
+
+    def encrypt_auth(self, public_key):
+        dotenv.set_key(VGTUAuth.ENV, VGTUAuth.USERNAME, self.username)
+        cipher = PKCS1_OAEP.new(public_key)
+        encrypted_password = base64.b64encode(cipher.encrypt(bytes(self.password, 'utf-8'))).decode('utf-8')
+        dotenv.set_key(VGTUAuth.ENV, VGTUAuth.PASSWORD, encrypted_password)
+
+    def decrypt_auth(self, private_key):
+        self.username = dotenv.get_key(VGTUAuth.ENV, VGTUAuth.USERNAME)
+        encrypted_password = bytes(dotenv.get_key(VGTUAuth.ENV, VGTUAuth.PASSWORD), 'utf-8')
+        cipher = PKCS1_OAEP.new(private_key)
+        self.password = cipher.decrypt(base64.b64decode(encrypted_password))
+
+    @staticmethod
+    def get_key():
+        if not os.path.isfile(VGTUAuth.KEY):
+            return None
+        with open(VGTUAuth.KEY, 'r') as key_file:
+            return RSA.importKey(key_file.read())
+
+    @staticmethod
+    def set_key():
+        key = RSA.generate(2048)
+        with open(VGTUAuth.KEY, 'wb') as key_file:
+            key_file.write(key.export_key('PEM'))
+        return key
+
+
 class VGTULoginError(BaseException):
 
     def __init__(self, message):
         self.message = message
+

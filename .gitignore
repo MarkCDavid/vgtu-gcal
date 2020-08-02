@@ -134,5 +134,6 @@ dmypy.json
 *.HTML
 *_files/
 
-# CSV
 *.csv
+*.env
+key.pem
