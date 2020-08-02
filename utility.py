@@ -10,7 +10,7 @@ def select_closest(select, collection, selector=lambda x: x):
     closest, ratio = None, 0
     for item in collection:
         new_ratio = SequenceMatcher(None, selector(item).lower(), select.lower()).ratio()
-        if new_ratio > ratio:
+        if new_ratio >= ratio:
             closest, ratio = item, new_ratio
     return closest, ratio == 1
 
@@ -41,11 +41,12 @@ def date_prompt(default=''):
 
 def select2_extractor(soup, id):
     table = soup.find('select', id=id)
+    options = table.find_all('option') if table is not None else soup.find_all('option')
     return {
-        'name': table['name'],
-        'options': [
-            {'name': option.text, 'value': option['value']}
-            for option
-            in table.find_all('option')
-        ]
+        'name': table['name'] if table is not None else '',
+        'options': [{'name': option.text, 'value': option['value']} for option in options]
     }
+
+
+def select2_table_name(soup, id):
+    return soup.find('select', id=id)['name']
