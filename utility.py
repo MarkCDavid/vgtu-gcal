@@ -18,7 +18,7 @@ def select_closest(select, collection, selector=lambda x: x):
 def select_closest_prompt(prompt, collection, default=lambda x: x[0], selector=lambda x: x):
     default = default(collection)
     while True:
-        user_input = input(prompt if default is None else f"{prompt} (default {selector(default)}) ")
+        user_input = input(prompt if default is None else f"{prompt} (default '{selector(default)}') ")
         if len(user_input) == 0 and default is not None:
             return default
         closest, exact = select_closest(user_input, collection, selector)
@@ -32,21 +32,8 @@ def date_prompt(default=''):
             user_date = input(f"Date: (default '{default}') ")
             if len(user_date) == 0:
                 return default
-            date = date_parser.parse()
+            date = date_parser.parse(user_date)
             return f"{date.year}-{date.month}-{date.day}"
         except ValueError:
             if not confirmation_prompt("Invalid date, try again?"):
                 return default
-
-
-def select2_extractor(soup, id):
-    table = soup.find('select', id=id)
-    options = table.find_all('option') if table is not None else soup.find_all('option')
-    return {
-        'name': table['name'] if table is not None else '',
-        'options': [{'name': option.text, 'value': option['value']} for option in options]
-    }
-
-
-def select2_table_name(soup, id):
-    return soup.find('select', id=id)['name']

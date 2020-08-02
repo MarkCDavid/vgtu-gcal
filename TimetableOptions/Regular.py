@@ -1,32 +1,32 @@
 from datetime import date
 
 import utility
+import select2
 
 
 class TimetableOptions:
 
-    def __init__(self, id, prompt):
+    def __init__(self, id):
         self.id = id
-        self.prompt = prompt
 
     @staticmethod
-    def selector(options):
-        return options['name']
+    def selector(option):
+        return option.name
 
     def get(self, soup):
-        options = utility.select2_extractor(soup, self.id)
-        selection = utility.select_closest_prompt(self.prompt, options['options'],
-                                                  self.default, TimetableOptions.selector)
-        return {options['name']: selection['value']}
+        selection = select2.Selection(self.id, soup)
+        choice = utility.select_closest_prompt(f'{selection.name}:', selection.options,
+                                               self.default, TimetableOptions.selector)
+        return {selection.query_name: choice.value}
 
     def default(self, options):
-        raise NotImplemented()
+        return options[0]
 
 
 class GroupOptions(TimetableOptions):
 
     def __init__(self):
-        super().__init__('timetable-gr_kodas', 'Group: ')
+        super().__init__('gr_kodas')
 
     def default(self, options):
         return None
@@ -35,54 +35,37 @@ class GroupOptions(TimetableOptions):
 class YearOptions(TimetableOptions):
 
     def __init__(self):
-        super().__init__('timetable-m_metai', 'Year: ')
-
-    def default(self, options):
-        return options[1]
+        super().__init__('m_metai')
 
 
 class SemesterOptions(TimetableOptions):
 
     def __init__(self):
-        super().__init__('timetable-sesija_pav', 'Semester: ')
-
-    def default(self, options):
-        spring_semester = range(2, 8)
-        current_month = date.today().month
-        return options[2 if current_month in spring_semester else 1]
+        super().__init__('sesija_pav')
 
 
 class DateOptions(TimetableOptions):
 
     def __init__(self):
-        super().__init__('timetable-data', '')
+        super().__init__('data')
 
     def get(self, soup):
-        return {soup.find('input', id=self.id)['name']: utility.date_prompt()}
+        return {soup.find('input', id=f'timetable-{self.id}')['name']: utility.date_prompt()}
 
 
 class LectureTypeOptions(TimetableOptions):
 
     def __init__(self):
-        super().__init__('timetable-pask_rus', 'Lecture type: ')
-
-    def default(self, options):
-        return options[0]
+        super().__init__('pask_rus')
 
 
 class CourseOptions(TimetableOptions):
 
     def __init__(self):
-        super().__init__('timetable-dal_pavad', 'Course: ')
-
-    def default(self, options):
-        return options[1]
+        super().__init__('dal_pavad')
 
 
 class TeacherOptions(TimetableOptions):
 
     def __init__(self):
-        super().__init__('timetable-paz_id', 'Teacher: ')
-
-    def default(self, options):
-        return options[1]
+        super().__init__('paz_id')

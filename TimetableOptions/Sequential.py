@@ -7,8 +7,8 @@ from TimetableOptions.Regular import TimetableOptions
 class SequentialOptions(TimetableOptions):
     INFO_URL = 'https://mano.vgtu.lt/timetable/site/timetableinfo'
 
-    def __init__(self, id, prompt, soup, successor=None):
-        super().__init__(id, prompt)
+    def __init__(self, id, soup, successor=None):
+        super().__init__(id)
         self.successor = successor
         self.request_id = utility.select2_table_name(soup, id)
         self.request_value = None
@@ -23,9 +23,6 @@ class SequentialOptions(TimetableOptions):
             result.update(self.successor.get_sequence(session, soup, params))
 
         return result
-
-    def default(self, options):
-        return options[1]
 
     def __next(self, session, params):
         params = self.update_params(params if params is not None else self.__default_params())
@@ -49,10 +46,7 @@ class SequentialOptions(TimetableOptions):
 class FacultyOptions(SequentialOptions):
 
     def __init__(self, soup, successor=None):
-        super().__init__('timetable-pad_id', 'Faculty: ', soup, successor)
-
-    def default(self, options):
-        return options[1]
+        super().__init__('pad_id', soup, successor)
 
     def update_params(self, params):
         super().update_params(params)
@@ -63,28 +57,19 @@ class FacultyOptions(SequentialOptions):
 class DegreeOptions(SequentialOptions):
 
     def __init__(self, soup, successor=None):
-        super().__init__('timetable-pakopa', 'Degree: ', soup, successor)
-
-    def default(self, options):
-        return options[1]
+        super().__init__('pakopa', soup, successor)
 
 
 class ProgrammeOptions(SequentialOptions):
 
     def __init__(self, soup, successor=None):
-        super().__init__('timetable-prog_id', 'Programme: ', soup, successor)
-
-    def default(self, options):
-        return options[1]
+        super().__init__('prog_id', soup, successor)
 
 
 class ProgrammeGroupOptions(SequentialOptions):
 
     def __init__(self, soup, successor=None):
-        super().__init__('timetable-dal_kodas', 'Group: ', soup, successor)
-
-    def default(self, options):
-        return options[1]
+        super().__init__('dal_kodas', soup, successor)
 
     def update_params(self, params):
         super().update_params(params)
@@ -95,16 +80,10 @@ class ProgrammeGroupOptions(SequentialOptions):
 class ProgrammeCourseOptions(SequentialOptions):
 
     def __init__(self, soup, successor=None):
-        super().__init__('timetable-kursas', 'Course: ', soup, successor)
-
-    def default(self, options):
-        return options[1]
+        super().__init__('kursas', soup, successor)
 
 
 class WeekdayOptions(SequentialOptions):
 
     def __init__(self, soup, successor=None):
-        super().__init__('timetable-dien_id', 'Weekday: ', soup, successor)
-
-    def default(self, options):
-        return options[1]
+        super().__init__('dien_id', soup, successor)
