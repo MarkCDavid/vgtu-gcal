@@ -17,12 +17,14 @@ class VGTUSession:
     def get(self, url, **kwargs):
         self.last_response = self.session.get(url, **kwargs)
         self.csrf = self.__get_csrf(self.last_response.text)
+        return self.last_response
 
     def post(self, url, data=None, json=None, **kwargs):
         if data is None:
             data = {}
         data['_csrf'] = self.csrf
         self.last_response = self.session.post(url, data, json, **kwargs)
+        return self.last_response
 
     @staticmethod
     def __get_csrf(html):
