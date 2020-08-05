@@ -1,9 +1,13 @@
 #!python
+from bs4 import BeautifulSoup
 
+from fetch import LectureTimetable
 from timetable.timetableparser import parse
 import sys
 import export
 import argparse
+
+from vgtu_session import VGTUSession
 
 
 def change_extension(filename, new_extension):
@@ -29,4 +33,8 @@ def convert(infile, outfile, options):
 
 
 if __name__ == "__main__":
-    convert(*build_options())
+    #convert(*build_options())
+    session = VGTUSession()
+    timetable = LectureTimetable(session)
+    group_timetable = timetable.group_timetable(session)
+    print(group_timetable)
